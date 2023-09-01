@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "stubble"
+name = "stubbles"
 version = "0.1.0"
 description = "Inline seamless code generation"
 authors = ["Jordan Edmunds"]
