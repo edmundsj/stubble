@@ -1,11 +1,13 @@
 # Stubble
-A native, inline code-generation tool
+A native, inline code-generation tool using the comment templating language
 
 ## The Problem
 One of the most difficult aspects of code generation is integrating generated code into existing codebases. Templating systems typically require full ownership of files or whole directories.
 
 ## The solution
-Stubble aims to solve this by allowing you to provide comment-based "stubs" in your existing codebase, to allow for injection of additional code. Your templates can be written in your native language and will be valid code on their own in their native language.
+Stubble aims to solve this by allowing you to provide comment-based "stubs" in your existing codebase, to allow for 
+injection of additional code. Your templates can be written in your native language and will be valid code on their 
+own in their native language.
 
 ## Example
 Let's say you have a python file. You can easily add a stub that `stubble` will find and replace:
@@ -40,7 +42,8 @@ And then it can be invoked as a command-line tool:
 python3 -m stubble --template my_file.cpp --replacements replacements.json
 ```
 
-By default, stubble produces code in a `generated` folder in the same location as it is in invoked. 
+By default, stubble produces code in a `generated` folder in the same location as it is in invoked, but this can be 
+overriden using the `--output-dir` option.
 
 
 
@@ -72,6 +75,13 @@ populated_template = populate(
 
 ```
 `stubbles` also provides the helper functions `read_dict_from_file`, which reads a dict from an arbitrary key-value pair file, and `language`, which takes a filename and figures out, from its extension, what language that file is using.
+
+## Fetaures
+- All stubble template files are valid code in their native language
+- Simple, lightweight, logicless template replacement
+- Allows for inline replacements and whole-line replacements
+- Support for individual input files and input directories
+- Respects indentation level of comment, auto-indents inserted code.
 
 ## Supported replacements file types
 Currently, the following replacements file types are supported:
