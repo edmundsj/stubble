@@ -1,6 +1,20 @@
 import pytest
-from stubbles.templates import lines, strip, stubble, whitespace, validate
+from stubbles.templates import lines, strip, stubs, whitespace, validate, populate, is_stubble_line
 from stubbles.types import Language
+
+
+@pytest.mark.parametrize(
+    'line,lang,desired',
+    (
+        ('// {{hello}}', Language.CPP, True),
+        ('# Yolo', Language.PYTHON, False),
+        ('# {{Yolo}}', Language.PYTHON, True),
+        ('# Serial.printlln({{key}})', Language.PYTHON, True),
+    )
+)
+def test_is_stubble_line(line, lang, desired):
+    actual = is_stubble_line(line=line, lang=lang)
+    assert actual == desired
 
 
 def test_lines_python():
@@ -49,13 +63,22 @@ def test_whitespace(string, desired, lang):
 
 @pytest.mark.parametrize(
     'string,desired,lang', (
-            ('  # {{hello_there}}  ', 'hello_there', Language.PYTHON),
-            ('# {{hihi}}   ', 'hihi', Language.PYTHON),
-            ('     // {{hihi}}   ', 'hihi', Language.CPP),
+            ('  # {{hello_there}}  ', ['hello_there'], Language.PYTHON),
+            ('# {{hihi}}   ', ['hihi'], Language.PYTHON),
+            ('     // {{hihi}}   ', ['hihi'], Language.CPP),
+            ('     // {{hihi}}  {{yesyes}}  ', ['hihi', 'yesyes'], Language.CPP),
+            ('     // hihi  yesyes  ', [], Language.CPP),
     )
 )
-def test_stubble(string, desired, lang):
-    actual = stubble(line=string, lang=lang)
+def test_stubs_single(string, desired, lang):
+    actual = stubs(line=string, lang=lang)
+    assert actual == desired
+
+
+def test_stubs_multi():
+    string = '# {{hi}} {{there}}'
+    actual = stubs(line=string, lang=Language.PYTHON)
+    desired = ['hi', 'there']
     assert actual == desired
 
 
@@ -70,3 +93,35 @@ def test_validate_ok():
     template = '{{hello}}'
     replacements = {'hello': 'hello'}
     validate(template=template, lang=Language.PYTHON, replacements=replacements)
+
+
+def test_replace():
+    input_template = """
+Hello there partner    
+# {{key1}}
+    # {{key2}}
+\t#{{key3}}
+"""
+    desired = """
+Hello there partner    
+replacement1
+    replacement2
+\treplacement3
+"""
+    replacements = {
+        'key1': 'replacement1',
+        'key2': 'replacement2',
+        'key3': 'replacement3',
+    }
+    actual = populate(template=input_template, lang=Language.PYTHON, replacements=replacements)
+    assert actual == desired
+
+
+def test_replace_inline():
+    template = '// Serial.println({{key}});'
+    replacements = {'key': 'val'}
+    lang = Language.CPP
+    actual = populate(template=template, lang=lang, replacements=replacements)
+    desired = 'Serial.println(val);'
+    assert actual == desired
+
