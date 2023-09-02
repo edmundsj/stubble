@@ -1,5 +1,6 @@
 # Stubble
-A native, inline code-generation tool using the comment templating language
+A native, inline code-generation tool using the comment templating language.
+For more information on the comment templating language, see `ctl.md`
 
 ## The Problem
 One of the most difficult aspects of code generation is integrating generated code into existing codebases. Templating systems typically require full ownership of files or whole directories.
@@ -112,7 +113,6 @@ In principle, any language that supports comments can be supported by `stubbles`
 
 
 ## TODO:
-- Support input directories rather than just individual files
-- Complete command-line interface
-- Add tests for command-line interface
+- Add CI, code coverage
+- Add separate comment templating language specification
 
