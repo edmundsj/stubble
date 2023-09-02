@@ -1,5 +1,5 @@
 import pytest
-from stubbles.templates import lines, strip, stubs, whitespace, validate, populate, is_stubble_line
+from stubbles.templates import _lines, _strip, _stubs, _whitespace, validate, populate, _is_stubble_line
 from stubbles.types import Language
 
 
@@ -13,7 +13,7 @@ from stubbles.types import Language
     )
 )
 def test_is_stubble_line(line, lang, desired):
-    actual = is_stubble_line(line=line, lang=lang)
+    actual = _is_stubble_line(line=line, lang=lang)
     assert actual == desired
 
 
@@ -29,7 +29,7 @@ def test_lines_python():
     \t\t\t#
 """
 
-    actual = lines(template=template, lang=Language.PYTHON)
+    actual = _lines(template=template, lang=Language.PYTHON)
     desired = [
         "    # {{replacement_code}}",
         "# {{other_replacement_code}}"
@@ -45,7 +45,7 @@ def test_lines_python():
     )
 )
 def test_strip(string, desired, lang):
-    actual = strip(line=string, lang=lang)
+    actual = _strip(line=string, lang=lang)
     assert actual == desired
 
 
@@ -57,7 +57,7 @@ def test_strip(string, desired, lang):
     )
 )
 def test_whitespace(string, desired, lang):
-    actual = whitespace(line=string, lang=lang)
+    actual = _whitespace(line=string, lang=lang)
     assert actual == desired
 
 
@@ -71,13 +71,13 @@ def test_whitespace(string, desired, lang):
     )
 )
 def test_stubs_single(string, desired, lang):
-    actual = stubs(line=string, lang=lang)
+    actual = _stubs(line=string, lang=lang)
     assert actual == desired
 
 
 def test_stubs_multi():
     string = '# {{hi}} {{there}}'
-    actual = stubs(line=string, lang=Language.PYTHON)
+    actual = _stubs(line=string, lang=Language.PYTHON)
     desired = ['hi', 'there']
     assert actual == desired
 
