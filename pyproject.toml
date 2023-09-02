@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "stubbles"
-version = "0.4.0"
+version = "0.5.0"
 description = "Inline seamless code generation"
 authors = ["Jordan Edmunds"]
 license = "MIT"
