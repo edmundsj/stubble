@@ -1,4 +1,6 @@
 from stubbles.types import Language, extensions
+from typing import List
+from pathlib import Path
 import json
 import os
 import csv
@@ -59,3 +61,41 @@ def read_file_to_dict(filepath):
         raise ValueError(f"Unsupported file extension: {file_ext}")
 
     return output_dict
+
+
+def _is_excludable_file(path: Path):
+    if path.name.startswith('.'):
+        return True
+    if path.name.endswith('.'):
+        return True
+    if path.name.endswith('~'):
+        return True
+    if path.name.endswith('.swp'):
+        return True
+    if path.name.startswith('__'):
+        return True
+
+    return False
+
+
+def list_files(path: Path) -> List[Path]:
+    if not isinstance(path, Path):
+        raise ValueError(f'path {path} is not a Path object.')
+
+    result = []
+
+    if path.is_dir():
+        for child in path.iterdir():
+            if _is_excludable_file(child):
+                continue
+
+            if child.is_dir():
+                result.extend(list_files(child))
+            else:
+                result.append(child)
+    else:
+        return [path]
+
+
+    return result
+

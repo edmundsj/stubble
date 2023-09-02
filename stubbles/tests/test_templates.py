@@ -1,5 +1,5 @@
 import pytest
-from stubbles.templates import _lines, _strip, _stubs, _whitespace, validate, populate, _is_stubble_line
+from stubbles.templates import _lines, _strip, _stubs, _whitespace, validate, populate, _is_stubble_line, _indent
 from stubbles.types import Language
 
 
@@ -111,6 +111,54 @@ replacement1
     replacements = {
         'key1': 'replacement1',
         'key2': 'replacement2',
+        'key3': 'replacement3',
+    }
+    actual = populate(template=input_template, lang=Language.PYTHON, replacements=replacements)
+    assert actual == desired
+
+
+def test_replace_inline():
+    template = '// Serial.println({{key}});'
+    replacements = {'key': 'val'}
+    lang = Language.CPP
+    actual = populate(template=template, lang=lang, replacements=replacements)
+    desired = 'Serial.println(val);'
+    assert actual == desired
+
+
+def test_indent():
+    whitespace = '    '
+    content = 'hello'
+    desired = '    hello'
+    actual = _indent(content=content, whitespace=whitespace)
+    assert actual == desired
+
+
+def test_indent_multiline():
+    whitespace = '    '
+    content = 'hello\nthere'
+    desired = '    hello\n    there'
+    actual = _indent(content=content, whitespace=whitespace)
+    assert actual == desired
+
+
+def test_replace_multiline_indent():
+    input_template = """
+Hello there partner    
+# {{key1}}
+    # {{key2}}
+\t#{{key3}}
+"""
+    desired = """
+Hello there partner    
+replacement1
+    replacement2
+    replacement2.2
+\treplacement3
+"""
+    replacements = {
+        'key1': 'replacement1',
+        'key2': 'replacement2\nreplacement2.2',
         'key3': 'replacement3',
     }
     actual = populate(template=input_template, lang=Language.PYTHON, replacements=replacements)

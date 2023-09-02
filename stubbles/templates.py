@@ -11,7 +11,8 @@ def populate(template: str, lang: Language, replacements: Dict[str, str]) -> str
         if _is_stubble_line(line=line, lang=lang):
             replaced = _replace(line=line, lang=lang, replacements=replacements)
             stripped = _strip(line=replaced, lang=lang)
-            new_line = _whitespace(line=line, lang=lang) + stripped
+            whitespace = _whitespace(line=line, lang=lang)
+            new_line = _indent(content=stripped, whitespace=whitespace)
         else:
             new_line = line
         new_lines.append(new_line)
@@ -115,6 +116,13 @@ def _whitespace(line: str, lang: Language) -> str:
     spaces, *rest = line.split(comment)
     return spaces
 
+
+def _indent(content: str, whitespace: str) -> str:
+    return_lines = []
+    content_lines = content.split('\n')
+    for line in content_lines:
+        return_lines.append(whitespace + line)
+    return '\n'.join(return_lines)
 
 
 def _replace(line: str, lang: Language, replacements: Mapping[str, str]) -> str:
